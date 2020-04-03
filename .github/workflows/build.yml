@@ -6,20 +6,20 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        images:
+          - name: server
+            workingPath: ./server
+          - name: console
+            workingPath: ./console
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - uses: silvenga-docker/build-image@latest
       with:
-        workingPath: ./server
+        workingPath: ${{ matrix.images.workingPath }}
         dockerUserName: silvenga-docker
         dockerPassword: ${{ secrets.GITHUB_TOKEN }}
-        dockerImageName: ${{ github.repository }}/server
-        dockerTags: latest,${{ github.sha }}
-    - uses: silvenga-docker/build-image@latest
-      with:
-        workingPath: ./console
-        dockerUserName: silvenga-docker
-        dockerPassword: ${{ secrets.GITHUB_TOKEN }}
-        dockerImageName: ${{ github.repository }}/console
+        dockerImageName: ${{ github.repository }}/${{ matrix.images.name }}
         dockerTags: latest,${{ github.sha }}
