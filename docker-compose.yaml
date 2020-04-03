@@ -1,0 +1,47 @@
+version: '2.1'
+services:
+  server:
+    build: ./server
+    environment:
+      DB_HOSTNAME: mysql
+      DB_NAME: eset
+      DB_ADMIN_USERNAME: root
+      DB_ADMIN_PASSWORD: SilverLight
+      DB_USER_USERNAME: eset_user
+      DB_USER_PASSWORD: SilverLight
+      ERA_ADMINISTRATOR_PASSWORD: SilverLight
+    links:
+      - mysql
+    depends_on:
+      - mysql
+    ports:
+      - 2222:2222
+    # volumes:
+    #   - ./data/opt:/etc/opt/eset
+    #   - ./data/var:/var/opt/eset
+    #   - ./data/logs:/var/log/eset
+  console:
+    build: ./console
+    environment:
+      SERVER_HOSTNAME: server
+    links:
+      - server
+    depends_on:
+      - server
+    ports:
+     - 8080:8080
+  mysql:
+    # https://help.eset.com/esmc_install/71/en-US/database_requirements.html
+    image: mysql:5.7
+    command:
+      # https://help.eset.com/esmc_install/71/en-US/mysql_configuration.html
+      - --log-bin-trust-function-creators=ON
+      - --innodb-log-file-size=100M
+      - --innodb-log-files-in-group=2
+      - --max-allowed-packet=33M
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: SilverLight
+    # volumes:
+    #   - ./data/mysql:/var/lib/mysql:rw
+
