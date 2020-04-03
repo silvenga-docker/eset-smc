@@ -1,0 +1,25 @@
+name: "Build"
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: silvenga-docker/build-image@latest
+      with:
+        workingPath: ./server
+        dockerUserName: silvenga-docker
+        dockerPassword: ${{ secrets.GITHUB_TOKEN }}
+        dockerImageName: ${{ github.repository }}/server
+        dockerTags: latest,${{ github.sha }}
+    - uses: silvenga-docker/build-image@latest
+      with:
+        workingPath: ./console
+        dockerUserName: silvenga-docker
+        dockerPassword: ${{ secrets.GITHUB_TOKEN }}
+        dockerImageName: ${{ github.repository }}/console
+        dockerTags: latest,${{ github.sha }}
