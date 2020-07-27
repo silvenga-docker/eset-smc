@@ -1,5 +1,7 @@
 FROM ubuntu:bionic
 
+ENV ESMC_VERSION=7.2.2233.0
+
 # https://help.eset.com/esmc_install/71/en-US/prerequisites_server_linux.html
 RUN set -xe \
     && apt-get update \
@@ -31,12 +33,14 @@ RUN set -xe \
     && /usr/local/bin/myodbc-installer -d -l \
     && rm -r /tmp/
 
+# https://www.eset.com/us/business/security-management-center/download/#standalone
 ARG ESMC_URL=https://download.eset.com/com/eset/apps/business/era/server/linux/latest/server-linux-x86_64.sh
 
 RUN set -xe \
     && curl ${ESMC_URL} -o /opt/server-linux-x86_64.sh \
     && chmod +x /opt/server-linux-x86_64.sh \
     && /opt/server-linux-x86_64.sh --version \
+    && /opt/server-linux-x86_64.sh --version | grep $ESMC_VERSION \
     && mkdir -p /tmp
 
 VOLUME /etc/opt/eset /var/opt/eset /var/log/eset
